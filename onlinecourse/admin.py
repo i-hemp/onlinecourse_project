@@ -1,23 +1,40 @@
 from django.contrib import admin
-from .models import Question, Choice, Submission
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.sessions.models import Session
+from django.contrib.auth.models import User
+from .models import Course, Lesson, Question, Choice, Submission, Enrollment
 
-class ChoiceInline(admin.TabularInline):
-    model = Choice
+# Inline classes
+class LessonInline(admin.StackedInline):
+    model = Lesson
+    extra = 2
 
-class QuestionInline(admin.TabularInline):
+class QuestionInline(admin.StackedInline):
     model = Question
-    inlines = [ChoiceInline]
+    extra = 2
+
+class ChoiceInline(admin.StackedInline):
+    model = Choice
+    extra = 3
+
+# Custom admins
+class LessonAdmin(admin.ModelAdmin):
+    list_display = ('title', 'course')
+    list_filter = ('course',)
 
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
+    list_display = ('question_text', 'course', 'grade')
 
-class LessonAdmin(admin.ModelAdmin):
-    inlines = [QuestionInline]
+class CourseAdmin(admin.ModelAdmin):
+    inlines = [LessonInline, QuestionInline]
+    list_display = ('name', 'description')
 
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course')
+
+# Register your models here.
+admin.site.register(Course, CourseAdmin)
+admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(Choice)
+admin.site.register(Enrollment, EnrollmentAdmin)
 admin.site.register(Submission)
-admin.site.register(ContentType)
-admin.site.register(Session)
+admin.site.register(Choice)
