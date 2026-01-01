@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Course, Lesson, Question, Choice, Submission, Enrollment
+from .models import (
+    Course, Lesson, Question, Choice, Submission, Enrollment,
+    Instructor, Learner  # ← ADD THESE!
+)
 
 # Inline classes
 class LessonInline(admin.StackedInline):
@@ -25,16 +28,14 @@ class QuestionAdmin(admin.ModelAdmin):
     list_display = ('question_text', 'course', 'grade')
 
 class CourseAdmin(admin.ModelAdmin):
-    inlines = [LessonInline, QuestionInline]
+    inlines = [LessonInline]
     list_display = ('name', 'description')
 
-class EnrollmentAdmin(admin.ModelAdmin):
-    list_display = ('user', 'course')
-
-# Register your models here.
+# Register your models here. (7 classes!)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(Enrollment, EnrollmentAdmin)
+admin.site.register(Enrollment)
 admin.site.register(Submission)
-admin.site.register(Choice)
+admin.site.register(Instructor)  # ← ADD!
+admin.site.register(Learner)     # ← ADD!
